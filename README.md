@@ -5,8 +5,8 @@ An object-oriented approach to make creating WordPress settings pages easier.
 
 The WordPress Settings API, although robust, seems to be the not-so-fun API for most WordPress developers to play with. That's why I've made a few classes that wrap the Settings API functionality into a simpler, usable format. 
 
-===Example Usage===
-
+Example Usage
+=============
 ```
 add_action( 'admin_menu', 'register_settings_page' );
 
