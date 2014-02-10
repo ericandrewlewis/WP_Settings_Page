@@ -15,11 +15,11 @@ class WP_Settings_Page {
 	function __construct( $args = array() ) {
 
 		$defaults = array(
-			'page_title'      => 'Settings Page Title',          // The title to be displayed in the browser window on the settings page
-			'menu_title'      => 'Settings Menu Title',           // Menu item text for the settings page
-			'capability'      => 'manage_options',               // Which type of users can see this menu item
-			'slug'            => '',                             // The unique slug for this menu item
-			'render_callback' => array( $this, 'render_page' ),        // The rendering callback
+			'page_title'      => 'Settings Page Title', // The title to be displayed in the browser window on the settings page
+			'menu_title'      => 'Settings Menu Title', // Menu item text for the settings page
+			'capability'      => 'manage_options',      // Which type of users can see this menu item
+			'slug'            => '',                    // The unique slug for this menu item
+			'render_callback' => NULL,                  // The rendering callback
 			'parent_slug'     => '',
 			'icon_url'        => '',
 			'position'        => NULL,
@@ -43,7 +43,7 @@ class WP_Settings_Page {
 				$this->menu_title,
 				$this->capability,
 				$this->slug,
-				$this->render_callback
+				array( $this, 'render_callback' )
 			);
 		} else {
 			$this->url_slug = add_menu_page(
@@ -51,13 +51,26 @@ class WP_Settings_Page {
 				$this->menu_title,
 				$this->capability,
 				$this->slug,
-				$this->render_callback,
+				array( $this, 'render_callback' ),
 				$this->icon_url,
 				$this->position
 			);
 		}
 
 		register_setting( $this->slug, $this->slug );
+	}
+
+	/**
+	 * The main render method.
+	 *
+	 * Passes object to render method
+	 */
+	function render_callback() {
+		$callback = NULL === $this->render_callback
+			? array( $this, 'render_page' )
+			: $this->render_callback;
+
+		call_user_func( $callback, $this );
 	}
 
 	/**
@@ -117,7 +130,7 @@ class WP_Settings_Section {
 			'slug'            => '',
 			'title'           => '',
 			'settings_page'   => NULL,
-			'render_callback' => array( $this, 'render' )
+			'render_callback' => NULL
 		);
 
 		$args = wp_parse_args( $args, $defaults );
@@ -130,9 +143,22 @@ class WP_Settings_Section {
 		add_settings_section(
 			$this->slug,
 			$this->title,
-			$this->render_callback,
+			array( $this, 'render_callback' ),
 			$this->settings_page
 		);
+	}
+
+	/**
+	 * The main render method.
+	 *
+	 * Passes object to render method
+	 */
+	function render_callback() {
+		$callback = NULL === $this->render_callback
+			? array( $this, 'render' )
+			: $this->render_callback;
+
+		call_user_func( $callback, $this );
 	}
 
 	/**
@@ -198,7 +224,7 @@ class WP_Settings_Field {
 		add_settings_field(
 			$this->slug,
 			$this->title,
-			array( $this, 'render' ),
+			array( $this, 'render_callback' ),
 			$this->settings_page,
 			$this->section
 		);
@@ -211,7 +237,7 @@ class WP_Settings_Field {
 	 *
 	 * Calls a submethod depending on the field_type.
 	 */
-	function render() {
+	function render_callback() {
 		if ( NULL === $this->render_callback ) {
 			$sub_render_method = 'render_' . $this->field_type;
 			call_user_func( array( $this, $sub_render_method ) );
