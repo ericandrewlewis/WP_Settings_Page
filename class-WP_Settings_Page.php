@@ -27,14 +27,14 @@ class WP_Settings_Page {
 
 		$args = wp_parse_args( $args, $defaults );
 
-		$this->page_title = $args['page_title'];
-		$this->menu_title = $args['menu_title'];
-		$this->capability = $args['capability'];
-		$this->slug = $args['slug'];
+		$this->page_title      = $args['page_title'];
+		$this->menu_title      = $args['menu_title'];
+		$this->capability      = $args['capability'];
+		$this->slug            = $args['slug'];
 		$this->render_callback = $args['render_callback'];
-		$this->parent_slug = $args['parent_slug'];
-		$this->icon_url = $args['icon_url'];
-		$this->position = $args['position'];
+		$this->parent_slug     = $args['parent_slug'];
+		$this->icon_url        = $args['icon_url'];
+		$this->position        = $args['position'];
 
 		if ( $this->parent_slug ) {
 			$this->url_slug = add_submenu_page(
@@ -135,9 +135,9 @@ class WP_Settings_Section {
 
 		$args = wp_parse_args( $args, $defaults );
 
-		$this->slug = $args['slug'];
-		$this->title = $args['title'];
-		$this->settings_page = $args['settings_page'];
+		$this->slug            = $args['slug'];
+		$this->title           = $args['title'];
+		$this->settings_page   = $args['settings_page'];
 		$this->render_callback = $args['render_callback'];
 
 		add_settings_section(
@@ -208,13 +208,13 @@ class WP_Settings_Field {
 
 		$args = wp_parse_args( $args, $defaults );
 
-		$this->slug = $args['slug'];
-		$this->title = $args['title'];
+		$this->slug            = $args['slug'];
+		$this->title           = $args['title'];
 		$this->render_callback = $args['render_callback'];
-		$this->settings_page = $args['settings_page'];
-		$this->section = $args['section'];
-		$this->field_type = $args['field_type'];
-		$this->field_options = $args['options'];
+		$this->settings_page   = $args['settings_page'];
+		$this->section         = $args['section'];
+		$this->field_type      = $args['field_type'];
+		$this->field_options   = $args['options'];
 
 		// Preload the value of this field
 		$option = get_option( $this->settings_page );
