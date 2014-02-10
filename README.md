@@ -42,5 +42,19 @@ function register_settings_page() {
 		'slug' => 'instagram_link',
 		'title' => 'Instagram Link'
 	) );
+
+	$settings_page->get_section( 'social_media' )->add_field( array(
+		'slug'            => 'about_section',
+		'title'           => 'About Blurb',
+		'render_callback' => 'totally_rad_wysiwyg',
+	) );
+
+}
+
+function totally_rad_wysiwyg( $field ) {
+	wp_editor( html_entity_decode( esc_html( $field->value ) ), $field->slug, array(
+		'name' => $field->settings_page .'['. $field->slug .']',
+		'textarea_rows' => 5,
+	) );
 }
 ```
