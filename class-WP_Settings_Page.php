@@ -130,7 +130,7 @@ class WP_Settings_Section {
 			'slug'            => '',
 			'title'           => '',
 			'settings_page'   => NULL,
-			'render_callback' => NULL
+			'render_callback' => NULL,
 		);
 
 		$args = wp_parse_args( $args, $defaults );
@@ -202,7 +202,8 @@ class WP_Settings_Field {
 			'render_callback' => NULL,
 			'settings_page'   => NULL,
 			'section'         => '',
-			'field_type'      => 'text'
+			'field_type'      => 'text',
+			'options'         => NULL,
 		);
 
 		$args = wp_parse_args( $args, $defaults );
@@ -213,6 +214,7 @@ class WP_Settings_Field {
 		$this->settings_page = $args['settings_page'];
 		$this->section = $args['section'];
 		$this->field_type = $args['field_type'];
+		$this->field_options = $args['options'];
 
 		// Preload the value of this field
 		$option = get_option( $this->settings_page );
