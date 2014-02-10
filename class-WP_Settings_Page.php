@@ -32,7 +32,7 @@ class WP_Settings_Page {
 		$this->position = $args['position'];
 
 		if ( $this->parent_slug ) {
-			add_submenu_page(
+			$this->url_slug = add_submenu_page(
 				$this->parent_slug,
 				$this->page_title,
 				$this->menu_title,
@@ -41,7 +41,7 @@ class WP_Settings_Page {
 				$this->render_callback
 			);
 		} else {
-			add_menu_page(
+			$this->url_slug = add_menu_page(
 				$this->page_title,
 				$this->menu_title,
 				$this->capability,
