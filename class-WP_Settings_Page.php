@@ -173,7 +173,7 @@ class WP_Settings_Field {
 		$defaults = array(
 			'slug'            => '',
 			'title'           => '',
-			'render_callback' => array( $this, 'render' ),
+			'render_callback' => NULL,
 			'settings_page'   => NULL,
 			'section'         => '',
 			'field_type'      => 'text'
@@ -198,7 +198,7 @@ class WP_Settings_Field {
 		add_settings_field(
 			$this->slug,
 			$this->title,
-			$this->render_callback,
+			array( $this, 'render' ),
 			$this->settings_page,
 			$this->section
 		);
@@ -212,8 +212,12 @@ class WP_Settings_Field {
 	 * Calls a submethod depending on the field_type.
 	 */
 	function render() {
-		$sub_render_method = 'render_' . $this->field_type;
-		call_user_func( array( $this, $sub_render_method ) );
+		if ( NULL === $this->render_callback ) {
+			$sub_render_method = 'render_' . $this->field_type;
+			call_user_func( array( $this, $sub_render_method ) );
+		} else {
+			call_user_func( $this->render_callback, $this );
+		}
 	}
 
 	/**
