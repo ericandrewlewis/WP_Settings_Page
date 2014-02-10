@@ -15,26 +15,28 @@ class WP_Settings_Page {
 	function __construct( $args = array() ) {
 
 		$defaults = array(
-			'page_title'      => 'Settings Page Title', // The title to be displayed in the browser window on the settings page
-			'menu_title'      => 'Settings Menu Title', // Menu item text for the settings page
-			'capability'      => 'manage_options',      // Which type of users can see this menu item
-			'slug'            => '',                    // The unique slug for this menu item
-			'render_callback' => NULL,                  // The rendering callback
-			'parent_slug'     => '',
-			'icon_url'        => '',
-			'position'        => NULL,
+			'page_title'        => 'Settings Page Title', // The title to be displayed in the browser window on the settings page
+			'menu_title'        => 'Settings Menu Title', // Menu item text for the settings page
+			'capability'        => 'manage_options',      // Which type of users can see this menu item
+			'slug'              => '',                    // The unique slug for this menu item
+			'render_callback'   => NULL,                  // The rendering callback
+			'sanitize_callback' => NULL,                  // The sanitization callback
+			'parent_slug'       => '',
+			'icon_url'          => '',
+			'position'          => NULL,
 		);
 
 		$args = wp_parse_args( $args, $defaults );
 
-		$this->page_title      = $args['page_title'];
-		$this->menu_title      = $args['menu_title'];
-		$this->capability      = $args['capability'];
-		$this->slug            = $args['slug'];
-		$this->render_callback = $args['render_callback'];
-		$this->parent_slug     = $args['parent_slug'];
-		$this->icon_url        = $args['icon_url'];
-		$this->position        = $args['position'];
+		$this->page_title        = $args['page_title'];
+		$this->menu_title        = $args['menu_title'];
+		$this->capability        = $args['capability'];
+		$this->slug              = $args['slug'];
+		$this->render_callback   = $args['render_callback'];
+		$this->sanitize_callback = $args['sanitize_callback'];
+		$this->parent_slug       = $args['parent_slug'];
+		$this->icon_url          = $args['icon_url'];
+		$this->position          = $args['position'];
 
 		if ( $this->parent_slug ) {
 			$this->url_slug = add_submenu_page(
@@ -57,7 +59,7 @@ class WP_Settings_Page {
 			);
 		}
 
-		register_setting( $this->slug, $this->slug );
+		register_setting( $this->slug, $this->slug, array( $this, 'sanitize_callback' ) );
 	}
 
 	/**
@@ -83,7 +85,7 @@ class WP_Settings_Page {
 
 				<div id="icon-themes" class="icon32"></div>
 				<h2><?php echo $this->page_title; ?></h2>
-				<?php settings_errors(); ?>
+				<?php // settings_errors(); ?>
 
 				<form method="post" action="options.php">
 					<?php settings_fields( $this->slug ); ?>
@@ -93,6 +95,20 @@ class WP_Settings_Page {
 
 			</div><!-- /.wrap -->
 		<?php
+	}
+
+	/**
+	 * The main render method.
+	 *
+	 * Passes object to render method
+	 */
+	function sanitize_callback( $value ) {
+		if ( NULL === $this->sanitize_callback ) {
+			// No sanitization by default
+			return $value;
+		}
+		// Custom sanitization callback
+		return call_user_func( $this->sanitize_callback, $value, $this );
 	}
 
 	/**
