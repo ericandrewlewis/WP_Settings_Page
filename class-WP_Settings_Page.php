@@ -150,6 +150,7 @@ class WP_Settings_Section {
 		$args['section'] = $this->slug;
 		$args['settings_page'] = $this->settings_page;
 		$fields[$args['slug']] = new WP_Settings_Field( $args );
+		return $this;
 	}
 }
 
