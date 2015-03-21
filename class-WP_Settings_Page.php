@@ -5,7 +5,6 @@
      * plugin_dir_url(  __FILE__  ) if this file is in your plugin directory
      */
     define('WP_SETTINGS_LOCATION', get_template_directory_uri());
-
     class WP_Settings_Page {
         /**
          * Array of WP_Settings_Sections objects
@@ -58,7 +57,6 @@
                 );
             }
             register_setting( $this->slug, $this->slug, array( $this, 'sanitize_callback' ) );
-
         }
         /**
          * The main render method.
@@ -104,40 +102,30 @@
                 </div><!-- /.wrap -->
             <?php
         }
-
         /**
          * Automatically creates tabs for sections
          * @param $page aka $this->slug
          */
         function do_settings_sections_tabs($page){
-
             global $wp_settings_sections, $wp_settings_fields;
-
             if(!isset($wp_settings_sections[$page])) :
                 return;
             endif;
-
             foreach((array)$wp_settings_sections[$page] as $section) {
-
                 printf('<div class="settings_panel" id="%1$s">',
                     $section['id']      /** %1$s - The ID of the tab */
                 );
-
                 if(!isset($section['title']))
                     continue;
-
                 if($section['callback'])
                     call_user_func($section['callback'], $section);
-
                 if(!isset($wp_settings_fields) || !isset($wp_settings_fields[$page]) || !isset($wp_settings_fields[$page][$section['id']]))
                     continue;
                 echo '<h2>' . $section['title'] . '</h2>';
                 echo '<table class="form-table">';
                 do_settings_fields($page, $section['id']);
                 echo '</table>';
-
                 echo '</div>';
-
             }
         }
         /**
@@ -259,7 +247,6 @@
             $this->field_type      = $args['field_type'];
             $this->field_options   = $args['options'];
             $this->instructions    = $args['instructions'];
-
             // Preload the value of this field
             $option = get_option( $this->settings_page );
             if ( ! empty( $option[$this->slug] ) )
@@ -287,7 +274,6 @@
                 call_user_func( $this->render_callback, $this );
             }
         }
-
         /**
          * Render a simple text input box
          */
@@ -297,7 +283,6 @@
                 echo '<br>' . $this->instructions;
             }
         }
-
         /**
          * Render a textarea
          */
@@ -307,7 +292,6 @@
                 echo '<br>' . $this->instructions;
             }
         }
-
         /**
          * Render a checkbox
          */
@@ -320,7 +304,6 @@
                     echo '<br>' . $this->instructions;
                 }
         }
-
         /**
          * Render a Upload Field
          */
@@ -333,14 +316,11 @@
                 }
                 ?>
             </label><?php
-
         }
-
         /**
          * Render WYSIWYG editor
          */
         function render_wysiwyg() {
-
             $settings = array(
                 'teeny' => true,
                 'media_buttons' => false,
@@ -352,5 +332,43 @@
             if($this->instructions != '') {
                 echo '<br>' . $this->instructions;
             }
+        }
+    }
+
+
+    add_action( 'admin_menu', 'register_settings_page' );
+    function register_settings_page() {
+        $mysettings = apply_filters( 'settings_array', array());
+        $currPage = array();
+        $currPage['slug'] = $mysettings['slug'];
+        $currPage['menu_title'] = $mysettings['menu_title'];
+        $currPage['capability'] = $mysettings['capability'];
+        $currPage['page_title'] = $mysettings['page_title'];
+
+        if(isset($mysettings['parent_slug'])) {
+            $currPage['parent_slug'] = $mysettings['parent_slug'];
+        }
+        $settings_page = new WP_Settings_Page( $currPage );
+
+        $sections = $mysettings['sections'];
+        foreach($sections as $slug => $section_info ) {
+            $settings_page->add_section( array(
+                'slug'          => $section_info['slug'],
+                'title'         => $section_info['title'],
+                'settings_page' => $section_info['settings_page']
+            ));
+            $fields = $section_info['fields'];
+
+            foreach ( (array) $fields as $field ) {
+                $currField = array();
+                $currField['slug'] = $field['slug'];
+                $currField['title'] = $field['title'];
+                $currField['field_type'] = $field['field_type'];
+                if(isset($field['instructions'])) {
+                    $currField['instructions'] = $field['instructions'];
+                }
+                $settings_page->get_section( $section_info['slug'] )->add_field( $currField );
+            }
+
         }
     }
