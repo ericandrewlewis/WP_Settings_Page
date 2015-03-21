@@ -1,7 +1,7 @@
 <?php
 
-add_filter('settings_array', 'bwp_create_settings' );
-function bwp_create_settings( $settings ){
+add_filter('settings_array', 'create_settings' );
+function create_settings( $settings ){
     $settings = array(
         'slug'          => 'settings_page',
         'menu_title'    => 'Settings',

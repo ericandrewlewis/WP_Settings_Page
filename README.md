@@ -8,44 +8,47 @@ The WordPress Settings API, although robust, seems to be the not-so-fun API for 
 ## Example Usage
 ```php
 <?php
-add_action( 'admin_menu', 'register_settings_page' );
-
-function register_settings_page() {
-    $settings_page = new WP_Settings_Page( array(
-        'slug' => 'totally_rad_theme_settings',
-        'menu_title' => 'Theme Settings',
-        'page_title' => 'Theme Settings'
-    ) );
-
-    $settings_page->add_section( array(
-        'slug' => 'social_media',
-        'title' => 'Social Media Links',
-        'settings_page' => 'totally_rad_theme_settings'
-    ) );
-
-    $settings_page->get_section( 'social_media' )->add_field( array(
-        'slug' => 'twitter_link',
-        'title' => 'Twitter Link'
-    ) );
-
-    $settings_page->get_section( 'social_media' )->add_field( array(
-        'slug'          => 'show_twitter',
-        'title'         => 'Show Twitter',
-        'field_type'    => 'checkbox',
-    ));
-    $settings_page->get_section( 'social_media' )->add_field( array(
-        'slug'          => 'twitter_icon',
-        'title'         => 'Twitter Icon',
-        'field_type'    => 'upload',
-    ));
-    $settings_page->get_section( 'social_media' )->add_field( array(
-        'slug'          => 'about_blurb',
-        'title'         => 'About Blurb',
-        'field_type'    => 'wysiwyg',
-        'instructions'    => '<p>Write a short about us blurb for your site</p>',
-
-    ));
-
+add_filter('settings_array', 'create_settings' );
+function create_settings( $settings ){
+    $settings = array(
+        'slug'          => 'settings_page',
+        'menu_title'    => 'Settings',
+        'capability'    => 'manage_options',
+        'page_title'    => 'Plugin Settings',
+        'parent_slug'   => '/tools.php',
+        'sections'      => array(
+            'new_section' => array(
+                'slug'              => 'new_section',
+                'title'             => 'New Section',
+                'settings_page'     => 'settings_page',
+                'fields'            => array(
+                    'text_field' => array(
+                        'slug'          => 'text_field',
+                        'title'         => 'Text Field',
+                        'field_type'    => 'text',
+                    ),
+                    'checkbox' => array(
+                        'slug'          => 'checkbox',
+                        'title'         => 'Checkbox Field',
+                        'field_type'    => 'checkbox',
+                    ),
+                    'upload' => array(
+                        'slug'          => 'upload',
+                        'title'         => 'Upload Field',
+                        'field_type'    => 'upload',
+                    ),
+                    'wysiwyg' => array(
+                        'slug'          => 'wysiwyg',
+                        'title'         => 'WYSIWYG Field',
+                        'field_type'    => 'wysiwyg',
+                        'instructions'    => '<p>{name} - Adds donor name<br>{amount} - Adds donation amount<br>{sitename} - Adds site name</p>',
+                    ),
+                )
+            ),
+            
+        )
+    );
+    return $settings;
 }
 
 
